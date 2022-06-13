@@ -1,5 +1,5 @@
-#ifndef THEMEWIDGET_H
-#define THEMEWIDGET_H
+#ifndef WIDGETCHART_H
+#define WIDGETCHART_H
 
 #include <QtWidgets/QWidget>
 #include <QtCharts/QChartGlobal>
