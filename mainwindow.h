@@ -7,13 +7,15 @@
 #include <QTreeView>
 #include <QTableView>
 #include <QBoxLayout>
+
 #include "themewidget.h"
 
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 private slots:
-	void on_selectionChangedSlot(const QItemSelection &selected, const QItemSelection &deselected);
+    void selectInTreeSlot(const QItemSelection &selected, const QItemSelection &deselected);
+    void selectInTableSlot(const QItemSelection &selected, const QItemSelection &deselected);
 
 public:
 	MainWindow(QWidget *parent = 0);

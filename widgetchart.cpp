@@ -19,6 +19,8 @@
 #include <QtCore/QTime>
 #include <QtCharts/QBarCategoryAxis>
 #include <QFileDialog>
+#include <QtSql>
+#include <QSqlTableModel>
 #include "widgetchart.h"
 
 
@@ -50,29 +52,117 @@ WidgetChart::WidgetChart(QWidget* parent)
     }
 }
 
-DataTable WidgetChart::generateRandomData(int listCount, int valueMax, int valueCount)
+void WidgetChart::updateDataGraphic(const QString& filePath)
 {
-    DataTable dataTable;
+    QSqlDatabase sdb = QSqlDatabase::addDatabase("QSQLITE");
+    sdb.setConnectOptions("QSQLITE_OPEN_READONLY=1");
+    sdb.setDatabaseName(filePath);
+    if (sdb.open())
+    {
+        qDebug() << "BD open\n";
+        qDebug() << sdb.connectionName();
+        qDebug() << filePath;
 
-    // set seed for random stuff
-    qsrand(QTime(0, 0, 0).secsTo(QTime::currentTime()));
+        QString dbName = filePath;
+        dbName.remove(0,dbName.lastIndexOf('/') + 1);
+        dbName.remove(dbName.indexOf('.'), dbName.size() - dbName.indexOf('.'));
 
-    // generate random data
-    for (int i(0); i < listCount; i++) {
+//        m_dataTable.clear();
+//        DataList dataList;
+
+//        QSqlTableModel modelSdb;
+//        modelSdb.setTable(dbName);
+
+//        qDebug() << modelSdb.rowCount();
+//        int index = 0;
+//        while (modelSdb.rowCount() > 0)
+//               {
+//                    qDebug() << modelSdb.rowCount();
+
+//                    float tempVal = modelSdb.headerData(0, Qt::Vertical).toFloat();
+//                    QString tempDate = modelSdb.headerData(1, Qt::Vertical).toString();
+
+//                    QPointF value(index, tempVal);
+
+//                    dataList << Data(value, tempDate);
+
+//                    modelSdb.removeRows(0, 1);
+
+//                    index++;
+//               }
+
+//        m_dataTable << dataList;
+
+
+        m_dataTable.clear();
+        QSqlQuery query("SELECT VALUE, TIME FROM " + dbName, sdb);
+        int index = 0;
         DataList dataList;
-        qreal yValue(0);
-        for (int j(0); j < valueCount; j++) {
-            yValue = yValue + (qreal)(qrand() % valueMax) / (qreal) valueCount;
-            QPointF value((j + (qreal) rand() / (qreal) RAND_MAX) * ((qreal) valueMax / (qreal) valueCount),
-                          yValue);
-            QString label = "Slice " + QString::number(i) + ":" + QString::number(j);
-            dataList << Data(value, label);
+        qDebug() << dbName;
+
+
+        while (query.next())
+        {
+            float tempVal = query.value(0).toFloat();
+            QString tempDate = query.value(1).toString();
+            //qDebug() << "Val:" << tempVal << "\n";
+            //qDebug() << "Dat:" <<tempDate << "\n";
+            QPointF value(index, tempVal);
+
+            dataList << Data(value, tempDate);
+
+            index++;
         }
-        dataTable << dataList;
+        //qDebug() << index << "\n";
+        m_dataTable << dataList;
+    }
+    else
+    {
+        qDebug() << "BD not open\n";
     }
 
-    return dataTable;
+    updateGraphic();
+
+
+
+//    for (int i(0); i < listCount; i++) {
+//        DataList dataList;
+//        qreal yValue(0);
+//        for (int j(0); j < valueCount; j++) {
+//            yValue = yValue + (qreal)(qrand() % valueMax) / (qreal) valueCount;
+//            QPointF value((j + (qreal) rand() / (qreal) RAND_MAX) * ((qreal) m_valueMax / (qreal) valueCount),
+//                          yValue);
+//            QString label = "Slice " + QString::number(i) + ":" + QString::number(j);
+//            dataList << Data(value, label);
+//        }
+//        dataTable << dataList;
+//    }
+
 }
+
+//DataTable WidgetChart::generateRandomData(int listCount, int valueMax, int valueCount)
+//{
+//    DataTable dataTable;
+
+//    // set seed for random stuff
+//    qsrand(QTime(0, 0, 0).secsTo(QTime::currentTime()));
+
+//    // generate random data
+//    for (int i(0); i < listCount; i++) {
+//        DataList dataList;
+//        qreal yValue(0);
+//        for (int j(0); j < valueCount; j++) {
+//            yValue = yValue + (qreal)(qrand() % valueMax) / (qreal) valueCount;
+//            QPointF value((j + (qreal) rand() / (qreal) RAND_MAX) * ((qreal) valueMax / (qreal) valueCount),
+//                          yValue);
+//            QString label = "Slice " + QString::number(i) + ":" + QString::number(j);
+//            dataList << Data(value, label);
+//        }
+//        dataTable << dataList;
+//    }
+
+//    return dataTable;
+//}
 
 void WidgetChart::createAreaChart() const
 {
@@ -265,6 +355,11 @@ void WidgetChart::updateWidget(TypeWidgetChart newType, bool notColoredChart)
     typeWidget = newType;
     notColored = notColoredChart;
 
+    updateGraphic();
+}
+
+void WidgetChart::updateGraphic()
+{
     switch (typeWidget)
     {
     case TypeWidgetChart::Area :
@@ -287,4 +382,6 @@ void WidgetChart::updateWidget(TypeWidgetChart newType, bool notColoredChart)
         break;
     }
 }
+
+
 

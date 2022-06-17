@@ -19,6 +19,7 @@
 #include <QtCore/QTime>
 #include <QtCharts/QBarCategoryAxis>
 #include <QFileDialog>
+#include <QPdfWriter>
 
 #include "themewidget.h"
 
@@ -57,13 +58,18 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
 
 ThemeWidget::~ThemeWidget()
 {
-    delete baseLayout;
-    delete settingsLayout;
     delete labelChooseTypeChart;
     delete typeComboBox;
     delete notColoredCheckBox;
     delete printButton;
     delete chart;
+    delete settingsLayout;
+    delete baseLayout;
+}
+
+void ThemeWidget::updateDataGraphic(const QString& filePath)
+{
+    chart->updateDataGraphic(filePath);
 }
 
 void ThemeWidget::connectSignals()
@@ -79,13 +85,13 @@ void ThemeWidget::openFileDialogWindow()
 {
     QFileDialog *fileDialog = new QFileDialog(this);
              // определить заголовок файла
-    fileDialog-> setWindowTitle (tr ("Открыть файл"));
+    fileDialog-> setWindowTitle (tr ("Сохранить как"));
              // Установить путь к файлу по умолчанию
     fileDialog->setDirectory(".");
              // Установить фильтр файлов
-    fileDialog->setNameFilter(tr("BD(*.sqlite *.json)"));
+    fileDialog->setNameFilter(tr("PDF(*.pdf)"));
              // Настройка позволяет выбрать несколько файлов, по умолчанию используется только один файл QFileDialog :: ExistingFiles
-    fileDialog->setFileMode(QFileDialog::ExistingFiles);
+    //fileDialog->setFileMode(QFileDialog::ExistingFiles);
              // Установить режим просмотра
     fileDialog->setViewMode(QFileDialog::Detail);
              // выводим путь ко всем выбранным файлам
@@ -94,6 +100,17 @@ void ThemeWidget::openFileDialogWindow()
     {
         fileNames = fileDialog->selectedFiles();
     }
+
+    QPdfWriter writer(fileNames[0] + ".pdf");
+
+    writer.setCreator("Someone");//Указываем создателя документа
+
+    writer.setPageSize(QPagedPaintDevice::A4);//Устанавливаем размер страницы
+
+    QPainter painter(&writer);
+
+    chart->getChartView()->render(&painter);
+    painter.end();
 }
 
 

@@ -44,15 +44,17 @@ public:
 
     void updateWidget(TypeWidgetChart newType, bool notColoredChart);
 
+    void updateDataGraphic(const QString& filePath);
+
     QChartView* getChartView() { return chartView; };
 
 private:
     bool notColored = false;
     TypeWidgetChart typeWidget = TypeWidgetChart::Area;
-    DataTable m_dataTable = generateRandomData(1, 10, 10);
+    DataTable m_dataTable; //= generateRandomData(1, 10, 10);
     QChartView *chartView = nullptr;
 
-    static DataTable generateRandomData(int listCount, int valueMax, int valueCount);
+//    static DataTable generateRandomData(int listCount, int valueMax, int valueCount);
 
     void createAreaChart() const;
     void createBarChart() const;
@@ -60,6 +62,8 @@ private:
     void createLineChart() const;
     void createSplineChart() const;
     void createScatterChart() const;
+
+    void updateGraphic();
 
 };
 

@@ -25,6 +25,8 @@ public:
     explicit ThemeWidget(QWidget *parent = nullptr);
     ~ThemeWidget();
 
+    void updateDataGraphic(const QString& filePath);
+
 private Q_SLOTS:
     void updateUI();
     void openFileDialogWindow();
