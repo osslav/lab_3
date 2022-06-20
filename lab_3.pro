@@ -19,16 +19,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         mainwindow.cpp \
+        printchart.cpp \
+        readdata.cpp \
         themewidget.cpp \
         widgetchart.cpp \
         main.cpp
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+#qnx: target.path = /tmp/$${TARGET}/bin
+#else: unix:!android: target.path = /opt/$${TARGET}/bin
+#!isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    ioccontainer.h \
     mainwindow.h \
+    printchart.h \
+    readdata.h \
     themewidget.h \
     widgetchart.h
