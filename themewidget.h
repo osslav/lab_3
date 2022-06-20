@@ -35,6 +35,8 @@ private:
     QComboBox *createTypeBox() const;
     void connectSignals();
 
+    void addPrinterInContainer(TypeChart type);
+
     QVBoxLayout *baseLayout;
     QHBoxLayout *settingsLayout;
 

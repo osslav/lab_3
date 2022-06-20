@@ -22,6 +22,7 @@
 #include <QPdfWriter>
 
 #include "themewidget.h"
+#include "ioccontainer.h"
 
 
 ThemeWidget::ThemeWidget(QWidget *parent) :
@@ -44,7 +45,7 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
     baseLayout->addLayout(settingsLayout);
 
     //create chart
-
+    addPrinterInContainer(TypeChart::bar);
     chart = new WidgetChart(this);
 
     baseLayout->addWidget(chart->getChartView());
@@ -53,6 +54,7 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
 
     // Set defaults
     notColoredCheckBox->setChecked(true);
+
     updateUI();
 }
 
@@ -120,20 +122,30 @@ QComboBox *ThemeWidget::createTypeBox() const
 {
     // type layout
     QComboBox *themeComboBox = new QComboBox();
-    themeComboBox->addItem("Area", TypeWidgetChart::Area);
-    themeComboBox->addItem("Bar", TypeWidgetChart::Bar);
-    themeComboBox->addItem("Line", TypeWidgetChart::Line);
-    themeComboBox->addItem("Pie", TypeWidgetChart::Pie);
-    themeComboBox->addItem("Spline", TypeWidgetChart::Spline);
-    themeComboBox->addItem("Scatter", TypeWidgetChart::Scatter);
+    themeComboBox->addItem("Bar", TypeChart::bar);
+    themeComboBox->addItem("Pie", TypeChart::pie);
     return themeComboBox;
 }
 
 void ThemeWidget::updateUI()
 {
-    TypeWidgetChart typeChart = static_cast<TypeWidgetChart>(
+    TypeChart typeChart = static_cast<TypeChart>(
                 typeComboBox->itemData(typeComboBox->currentIndex()).toInt());
 
-    chart->updateWidget(typeChart, notColoredCheckBox->isChecked());
+    addPrinterInContainer(typeChart);
+    chart->updateWidget(notColoredCheckBox->isChecked());
 }
+
+void ThemeWidget::addPrinterInContainer(TypeChart type)
+{
+    switch (type)
+    {
+    case TypeChart::bar :
+        IOCContainer::instance().RegisterFactory<IPrinterChart, PrinterChartBar>();
+        break;
+    case TypeChart::pie :
+        IOCContainer::instance().RegisterFactory<IPrinterChart, PrinterChartPie>();
+        break;
+    }
+};
 
