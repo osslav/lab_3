@@ -28,6 +28,8 @@ private:
     ThemeWidget *themeWidget;
     QVBoxLayout *tableLayout;
     QHBoxLayout *tableButtonLayout;
+
+    bool addReaderInContainer(QString fileExtension);
 };
 
 #endif // MAINWINDOW_H

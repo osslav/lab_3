@@ -35,6 +35,7 @@
 #include <QtCore/QTime>
 #include <QtCharts/QBarCategoryAxis>
 
+int IOCContainer::s_typeId = 121;
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -196,7 +197,17 @@ void MainWindow::selectInTableSlot(const QItemSelection &selected, const QItemSe
         this->statusBar()->showMessage("Выбранный путь : " + dirModel->filePath(indexs.constFirst()));
     }
 
-    themeWidget->updateDataGraphic(dirModel->filePath(indexs.constFirst()));
+
+    QString fileExtension = dirModel->filePath(indexs.constFirst());
+    fileExtension.remove(0, fileExtension.indexOf('.'));
+    if (addReaderInContainer(fileExtension))
+        themeWidget->updateDataGraphic(dirModel->filePath(indexs.constFirst()));
+    else
+    {
+        QMessageBox messageBox;
+        messageBox.critical(0,"Error","This file not support");
+        messageBox.setFixedSize(500,200);
+    }
 
     //TODO: !!!!!
     /*
@@ -221,4 +232,24 @@ void MainWindow::selectInTableSlot(const QItemSelection &selected, const QItemSe
 MainWindow::~MainWindow()
 {
 
+}
+
+bool MainWindow::addReaderInContainer(QString fileExtension)
+{
+    qDebug() << fileExtension;
+
+    if (fileExtension == ".sqlite")
+     {
+        IOCContainer::instance().RegisterFactory<IReadData, ReadDataSqlite>();
+        return true;
+    }
+
+    if (fileExtension == ".json")
+    {
+        IOCContainer::instance().RegisterFactory<IReadData, ReadDataJson>();
+        return true;
+    }
+
+
+    return false;
 }
