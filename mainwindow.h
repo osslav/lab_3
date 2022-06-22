@@ -14,7 +14,8 @@ class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 private slots:
-    void selectInTreeSlot(const QItemSelection &selected, const QItemSelection &deselected);
+    void openFileDialogWindow();
+//    void selectInTreeSlot(const QItemSelection &selected, const QItemSelection &deselected);
     void selectInTableSlot(const QItemSelection &selected, const QItemSelection &deselected);
 
 public:
@@ -22,12 +23,13 @@ public:
 	~MainWindow();
 private:
 	QFileSystemModel *fileModel;
-	QFileSystemModel *dirModel;
-	QTreeView *treeView;
+//	QFileSystemModel *dirModel;
+
+//	QTreeView *treeView;
 	QTableView *tableView;
     ThemeWidget *themeWidget;
     QVBoxLayout *tableLayout;
-    QHBoxLayout *tableButtonLayout;
+    QPushButton *changeDirectoryButton;
 
     bool addReaderInContainer(QString fileExtension);
 };

@@ -39,8 +39,7 @@ int IOCContainer::s_typeId = 121;
 
 
 MainWindow::MainWindow(QWidget *parent)
-	: //QWidget(parent)
-	  QMainWindow(parent)
+    : QMainWindow(parent)
 {
     themeWidget = new ThemeWidget();
     //Устанавливаем размер главного окна
@@ -49,9 +48,9 @@ MainWindow::MainWindow(QWidget *parent)
 	this->statusBar()->showMessage("Choosen Path: ");
 	QString homePath = QDir::homePath();
 	// Определим  файловой системы:
-	dirModel =  new QFileSystemModel(this);
-	dirModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
-	dirModel->setRootPath(homePath);
+//	dirModel =  new QFileSystemModel(this);
+//	dirModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
+//	dirModel->setRootPath(homePath);
 
 	fileModel = new QFileSystemModel(this);
     fileModel->setFilter(QDir::NoDotAndDotDot | QDir::Files);
@@ -59,16 +58,22 @@ MainWindow::MainWindow(QWidget *parent)
 	fileModel->setRootPath(homePath);
 	//Показать как дерево, пользуясь готовым видом:
 
-	treeView = new QTreeView();
-	treeView->setModel(dirModel);
+//	treeView = new QTreeView();
+//	treeView->setModel(dirModel);
 
-	treeView->expandAll();
+//	treeView->expandAll();
 
 	QSplitter *splitter = new QSplitter(parent);
+
+    tableLayout = new QVBoxLayout();
 	tableView = new QTableView;
+    changeDirectoryButton = new QPushButton("Change directory");
+    tableLayout->addWidget(tableView);
+    tableLayout->addWidget(changeDirectoryButton);
 	tableView->setModel(fileModel);
-    splitter->addWidget(treeView);
-    splitter->addWidget(tableView);    
+//    splitter->addWidget(treeView);
+    splitter->addWidget(tableView);
+    splitter->addWidget(changeDirectoryButton);
 
 //1.Добавление диаграммы
 //     QChartView *chartView;
@@ -83,11 +88,11 @@ MainWindow::MainWindow(QWidget *parent)
     //splitter->addWidget(chartView);
 	setCentralWidget(splitter);
 
-    QItemSelectionModel *selectionModelTree = treeView->selectionModel();
-	QModelIndex rootIx = dirModel->index(0, 0, QModelIndex());//корневой элемент
+//    QItemSelectionModel *selectionModelTree = treeView->selectionModel();
+//	QModelIndex rootIx = dirModel->index(0, 0, QModelIndex());//корневой элемент
 
-	QModelIndex indexHomePath = dirModel->index(homePath);
-	QFileInfo fileInfo = dirModel->fileInfo(indexHomePath);
+//	QModelIndex indexHomePath = dirModel->index(homePath);
+//	QFileInfo fileInfo = dirModel->fileInfo(indexHomePath);
 
     QItemSelectionModel *selectionModelTable = tableView->selectionModel();
 
@@ -123,11 +128,14 @@ MainWindow::MainWindow(QWidget *parent)
 //	}
 
 
-    treeView->header()->resizeSection(0, 200);
+//    treeView->header()->resizeSection(0, 200);
     //tableView->verticalHeader()->resizeSection(0, 2000);
 	//Выполняем соединения слота и сигнала который вызывается когда осуществляется выбор элемента в TreeView
-    connect(selectionModelTree, SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-            this, SLOT(selectInTreeSlot(const QItemSelection &, const QItemSelection &)));
+//    connect(selectionModelTree, SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+//            this, SLOT(selectInTreeSlot(const QItemSelection &, const QItemSelection &)));
+
+    connect(changeDirectoryButton, SIGNAL(clicked()), this, SLOT(openFileDialogWindow()));
+
 
     //Выполняем соединения слота и сигнала который вызывается когда осуществляется выбор элемента в TableView
     connect(selectionModelTable, SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
@@ -145,41 +153,60 @@ MainWindow::MainWindow(QWidget *parent)
 //выбор осуществляется с помощью курсора
 
 
-void MainWindow::selectInTreeSlot(const QItemSelection &selected, const QItemSelection &deselected)
+void MainWindow::openFileDialogWindow()
 {
-	//Q_UNUSED(selected);
-    //Q_UNUSED(deselected);
-	QModelIndex index = treeView->selectionModel()->currentIndex();
-	QModelIndexList indexs =  selected.indexes();
-	QString filePath = "";
+    QFileDialog fileDialog(this);
 
-	// Размещаем инфо в statusbar относительно выделенного модельного индекса
+    fileDialog.setFileMode(QFileDialog::Directory);
+             // Установить путь к файлу по умолчанию
+    fileDialog.setDirectory(QDir::homePath());
 
-	if (indexs.count() >= 1) {
-		QModelIndex ix =  indexs.constFirst();
-		filePath = dirModel->filePath(ix);
-		this->statusBar()->showMessage("Выбранный путь : " + dirModel->filePath(indexs.constFirst()));
-	}
+    QString filePath;
+    if(fileDialog.exec())
+    {
+        filePath = fileDialog.selectedFiles().first();
 
-	//TODO: !!!!!
-	/*
-	Тут простейшая обработка ширины первого столбца относительно длины названия папки.
-	Это для удобства, что бы при выборе папки имя полностью отображалась в  первом столбце.
-	Требуется доработка(переработка).
-	*/
-	int length = 200;
-	int dx = 30;
+        tableView->setRootIndex(fileModel->setRootPath(filePath));
+    }
 
-	if (dirModel->fileName(index).length() * dx > length) {
-		length = length + dirModel->fileName(index).length() * dx;
+
+}
+
+//void MainWindow::selectInTreeSlot(const QItemSelection &selected, const QItemSelection &deselected)
+//{
+//	//Q_UNUSED(selected);
+//    //Q_UNUSED(deselected);
+//	QModelIndex index = treeView->selectionModel()->currentIndex();
+//	QModelIndexList indexs =  selected.indexes();
+//	QString filePath = "";
+
+//	// Размещаем инфо в statusbar относительно выделенного модельного индекса
+
+//	if (indexs.count() >= 1) {
+//		QModelIndex ix =  indexs.constFirst();
+//		filePath = dirModel->filePath(ix);
+//		this->statusBar()->showMessage("Выбранный путь : " + dirModel->filePath(indexs.constFirst()));
+//	}
+
+//	//TODO: !!!!!
+//	/*
+//	Тут простейшая обработка ширины первого столбца относительно длины названия папки.
+//	Это для удобства, что бы при выборе папки имя полностью отображалась в  первом столбце.
+//	Требуется доработка(переработка).
+//	*/
+//	int length = 200;
+//	int dx = 30;
+
+//	if (dirModel->fileName(index).length() * dx > length) {
+//		length = length + dirModel->fileName(index).length() * dx;
 //		qDebug() << "r = " << index.row() << "c = " << index.column() << dirModel->fileName(index) << dirModel->fileInfo(
 //					 index).size();
 
-	}
+//	}
 
-	treeView->header()->resizeSection(index.column(), length + dirModel->fileName(index).length());
-	tableView->setRootIndex(fileModel->setRootPath(filePath));
-}
+//	treeView->header()->resizeSection(index.column(), length + dirModel->fileName(index).length());
+//	tableView->setRootIndex(fileModel->setRootPath(filePath));
+//}
 
 void MainWindow::selectInTableSlot(const QItemSelection &selected, const QItemSelection &deselected)
 {
@@ -193,15 +220,15 @@ void MainWindow::selectInTableSlot(const QItemSelection &selected, const QItemSe
 
     if (indexs.count() >= 1) {
         QModelIndex ix =  indexs.constFirst();
-        filePath = dirModel->filePath(ix);
-        this->statusBar()->showMessage("Выбранный путь : " + dirModel->filePath(indexs.constFirst()));
+        filePath = fileModel->filePath(ix);
+        this->statusBar()->showMessage("Выбранный путь : " + fileModel->filePath(indexs.constFirst()));
     }
 
 
-    QString fileExtension = dirModel->filePath(indexs.constFirst());
+    QString fileExtension = fileModel->filePath(indexs.constFirst());
     fileExtension.remove(0, fileExtension.indexOf('.'));
     if (addReaderInContainer(fileExtension))
-        themeWidget->updateDataGraphic(dirModel->filePath(indexs.constFirst()));
+        themeWidget->updateDataGraphic(fileModel->filePath(indexs.constFirst()));
     else
     {
         QMessageBox messageBox;
