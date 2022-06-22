@@ -42,46 +42,68 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     themeWidget = new ThemeWidget();
+    tableWidget = new MyTable();
     //Устанавливаем размер главного окна
     this->setGeometry(100, 100, 1500, 500);
 	this->setStatusBar(new QStatusBar(this));
 	this->statusBar()->showMessage("Choosen Path: ");
-	QString homePath = QDir::homePath();
 
-
-	fileModel = new QFileSystemModel(this);
-    fileModel->setFilter(QDir::NoDotAndDotDot | QDir::Files);
-
-	fileModel->setRootPath(homePath);
 
 	QSplitter *splitter = new QSplitter(parent);
 
-    tableLayout = new QVBoxLayout();
-	tableView = new QTableView;
-    changeDirectoryButton = new QPushButton("Change directory");
-    tableLayout->addWidget(tableView);
-    tableLayout->addWidget(changeDirectoryButton);
-	tableView->setModel(fileModel);
-    splitter->addWidget(tableView);
-    splitter->addWidget(changeDirectoryButton);
+    splitter->addWidget(tableWidget);
+    splitter->addWidget(themeWidget);
 
     splitter->addWidget(themeWidget);
-    //splitter->addWidget(chartView);
 	setCentralWidget(splitter);
 
-    QItemSelectionModel *selectionModelTable = tableView->selectionModel();
+    connect(tableWidget, SIGNAL(directoryChanged()), this, SLOT(selectInTableSlot()));
+}
 
-    connect(changeDirectoryButton, SIGNAL(clicked()), this, SLOT(changeDirectory()));
+void MainWindow::selectInTableSlot()
+{
+    QString filePath = tableWidget->getDirectory();
 
-    //Выполняем соединения слота и сигнала который вызывается когда осуществляется выбор элемента в TableView
-    connect(selectionModelTable, SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-            this, SLOT(selectInTableSlot(const QItemSelection &, const QItemSelection &)));
+    // Размещаем инфо в statusbar относительно выделенного модельного индекса
+    this->statusBar()->showMessage("Выбранный путь : " + filePath);
+
+    themeWidget->updateDataGraphic(filePath);
+}
+
+
+MainWindow::~MainWindow()
+{
 
 }
 
 
 
-void MainWindow::changeDirectory()
+MyTable::MyTable(QWidget *parent)
+    : QWidget(parent)
+{
+    QString homePath = QDir::homePath();
+
+    fileModel = new QFileSystemModel(this);
+    fileModel->setFilter(QDir::NoDotAndDotDot | QDir::Files);
+
+    fileModel->setRootPath(homePath);
+
+    tableLayout = new QVBoxLayout(this);
+    tableView = new QTableView;
+    changeDirectoryButton = new QPushButton("Change directory");
+    tableLayout->addWidget(tableView);
+    tableLayout->addWidget(changeDirectoryButton);
+    tableView->setModel(fileModel);
+
+    QItemSelectionModel *selectionModelTable = tableView->selectionModel();
+
+    connect(changeDirectoryButton, SIGNAL(clicked()), this, SLOT(changeDirectory()));
+
+    connect(selectionModelTable, SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(selectInTableSlot(const QItemSelection &, const QItemSelection &)));
+}
+
+void MyTable::changeDirectory()
 {
     QFileDialog fileDialog(this);
 
@@ -96,31 +118,30 @@ void MainWindow::changeDirectory()
 
         tableView->setRootIndex(fileModel->setRootPath(filePath));
     }
-
-
 }
 
 
 
-void MainWindow::selectInTableSlot(const QItemSelection &selected, const QItemSelection &deselected)
+void MyTable::selectInTableSlot(const QItemSelection &selected, const QItemSelection &deselected)
 {
     Q_UNUSED(deselected);
     QModelIndexList indexs =  selected.indexes();
     QString filePath = "";
 
-    // Размещаем инфо в statusbar относительно выделенного модельного индекса
-
-    if (indexs.count() >= 1) {
+    if (indexs.count() >= 1)
+    {
         QModelIndex ix =  indexs.constFirst();
         filePath = fileModel->filePath(ix);
-        this->statusBar()->showMessage("Выбранный путь : " + fileModel->filePath(indexs.constFirst()));
     }
 
 
     QString fileExtension = fileModel->filePath(indexs.constFirst());
     fileExtension.remove(0, fileExtension.indexOf('.'));
     if (addReaderInContainer(fileExtension))
-        themeWidget->updateDataGraphic(fileModel->filePath(indexs.constFirst()));
+    {
+        currentPath = fileModel->filePath(indexs.constFirst());
+        emit directoryChanged();
+    }
     else
     {
         QMessageBox messageBox;
@@ -129,12 +150,7 @@ void MainWindow::selectInTableSlot(const QItemSelection &selected, const QItemSe
     }
 }
 
-MainWindow::~MainWindow()
-{
-
-}
-
-bool MainWindow::addReaderInContainer(QString fileExtension)
+bool MyTable::addReaderInContainer(QString fileExtension)
 {
     qDebug() << fileExtension;
 
