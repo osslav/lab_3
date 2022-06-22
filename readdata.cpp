@@ -49,7 +49,8 @@ bool ReadDataJson::readData(DataTable& dataTable, const QString& filePath)
     QString val;
     QFile file;
     file.setFileName(filePath);
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return false;
     val = file.readAll();
     file.close();
 

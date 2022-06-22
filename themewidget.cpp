@@ -71,7 +71,14 @@ ThemeWidget::~ThemeWidget()
 
 void ThemeWidget::updateDataGraphic(const QString& filePath)
 {
-    chart->updateDataGraphic(filePath);
+    if (chart->updateDataGraphic(filePath))
+        updateUI();
+    else
+    {
+        QMessageBox messageBox;
+        messageBox.critical(0,"Error","Unable to plot file: " + filePath);
+        messageBox.setFixedSize(500,200);
+    }
 }
 
 void ThemeWidget::connectSignals()

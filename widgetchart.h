@@ -24,7 +24,7 @@ public:
 
     void updateWidget(bool notColoredChart);
 
-    void updateDataGraphic(const QString& filePath);
+    bool updateDataGraphic(const QString& filePath);
 
     QChartView* getChartView() { return &chartView; };
 

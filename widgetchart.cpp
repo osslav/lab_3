@@ -40,9 +40,9 @@ void WidgetChart::updateWidget(bool notColoredChart)
     updateGraphic();
 }
 
-void WidgetChart::updateDataGraphic(const QString& filePath)
+bool WidgetChart::updateDataGraphic(const QString& filePath)
 {
-    IOCContainer::instance().GetttObject<IReadData>()->readData(m_dataTable, filePath);
+    return IOCContainer::instance().GetttObject<IReadData>()->readData(m_dataTable, filePath);
 }
 
 void WidgetChart::updateGraphic()
