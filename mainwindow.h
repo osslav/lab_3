@@ -14,8 +14,7 @@ class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 private slots:
-    void openFileDialogWindow();
-//    void selectInTreeSlot(const QItemSelection &selected, const QItemSelection &deselected);
+    void changeDirectory();
     void selectInTableSlot(const QItemSelection &selected, const QItemSelection &deselected);
 
 public:
@@ -23,9 +22,7 @@ public:
 	~MainWindow();
 private:
 	QFileSystemModel *fileModel;
-//	QFileSystemModel *dirModel;
 
-//	QTreeView *treeView;
 	QTableView *tableView;
     ThemeWidget *themeWidget;
     QVBoxLayout *tableLayout;
