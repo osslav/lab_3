@@ -92,25 +92,25 @@ void ThemeWidget::connectSignals()
 
 void ThemeWidget::openFileDialogWindow()
 {
-    QFileDialog *fileDialog = new QFileDialog(this);
+    QFileDialog fileDialog(this);
              // определить заголовок файла
-    fileDialog-> setWindowTitle (tr ("Сохранить как"));
+    fileDialog.setWindowTitle (tr ("Сохранить как"));
              // Установить путь к файлу по умолчанию
-    fileDialog->setDirectory(".");
+    fileDialog.setDirectory(".");
              // Установить фильтр файлов
-    fileDialog->setNameFilter(tr("PDF(*.pdf)"));
+    fileDialog.setNameFilter(tr("PDF(*.pdf)"));
              // Настройка позволяет выбрать несколько файлов, по умолчанию используется только один файл QFileDialog :: ExistingFiles
-    //fileDialog->setFileMode(QFileDialog::ExistingFiles);
+    //fileDialog.setFileMode(QFileDialog::ExistingFiles);
              // Установить режим просмотра
-    fileDialog->setViewMode(QFileDialog::Detail);
+    fileDialog.setViewMode(QFileDialog::Detail);
              // выводим путь ко всем выбранным файлам
-    QStringList fileNames;
-    if(fileDialog->exec())
+    QString fileName;
+    if(fileDialog.exec())
     {
-        fileNames = fileDialog->selectedFiles();
+        fileName = fileDialog.selectedFiles().first();
     }
 
-    QPdfWriter writer(fileNames[0] + ".pdf");
+    QPdfWriter writer(fileName + ".pdf");
 
     writer.setCreator("Someone");//Указываем создателя документа
 
