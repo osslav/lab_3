@@ -156,3 +156,10 @@ void ThemeWidget::addPrinterInContainer(TypeChart type)
     }
 };
 
+void ThemeWidget::resizeEvent(QResizeEvent *event)
+{
+    //QWidget::resizeEvent(QResizeEvent *event)
+
+    updateUI();
+}
+

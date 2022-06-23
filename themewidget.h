@@ -37,6 +37,8 @@ private:
 
     void addPrinterInContainer(TypeChart type);
 
+    void virtual resizeEvent(QResizeEvent *event);
+
     QVBoxLayout *baseLayout;
     QHBoxLayout *settingsLayout;
 
