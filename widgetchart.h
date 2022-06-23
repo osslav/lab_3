@@ -22,17 +22,20 @@ public:
     WidgetChart(QWidget* parent = nullptr);
     virtual ~WidgetChart() {}//{ if (chartView) delete chartView; }
 
-    void updateWidget(bool notColoredChart);
+    void updateWidget(bool notColoredChart, int length);
 
     bool updateDataGraphic(const QString& filePath);
 
     QChartView* getChartView() { return &chartView; };
+
+    int getCountElemInDataTable() { return (m_dataTable.isEmpty() ? 0 : m_dataTable[0].size()); }
 
 private:
     bool notColored = false;
     DataTable m_dataTable;
     QChartView chartView;
     std::shared_ptr<IPrinterChart> printer;
+    int currentLenght;
 
     void updateGraphic();
 };

@@ -16,7 +16,7 @@ class QComboBox;
 class QCheckBox;
 QT_END_NAMESPACE
 
-
+const int MAX_LENGHT_CHART = 20;
 
 class ThemeWidget: public QWidget
 {
@@ -48,6 +48,11 @@ private:
     QPushButton *printButton;
 
     WidgetChart *chart;
+
+    QHBoxLayout *sizeSliderLayout;
+    QLabel *labelSizeSlider;
+    QSlider *sizeSlider;
+    QLabel *labelValueSlider;
 };
 
 #endif /* THEMEWIDGET_H */

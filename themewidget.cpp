@@ -33,6 +33,10 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
     printButton = new QPushButton("Печать графика");
     labelChooseTypeChart = new QLabel("Выберите тип диаграммы:");
 
+    labelSizeSlider = new QLabel("Размер текущего фрагмента:");
+    labelValueSlider = new QLabel();
+    sizeSlider = new QSlider(Qt::Horizontal);
+
     connectSignals();
     // create layout
     baseLayout = new QVBoxLayout();
@@ -49,6 +53,12 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
     chart = new WidgetChart(this);
 
     baseLayout->addWidget(chart->getChartView());
+
+    sizeSliderLayout = new QHBoxLayout();
+    sizeSliderLayout->addWidget(labelSizeSlider);
+    sizeSliderLayout->addWidget(sizeSlider);
+    sizeSliderLayout->addWidget(labelValueSlider);
+    baseLayout->addLayout(sizeSliderLayout);
 
     setLayout(baseLayout);
 
@@ -72,7 +82,11 @@ ThemeWidget::~ThemeWidget()
 void ThemeWidget::updateDataGraphic(const QString& filePath)
 {
     if (chart->updateDataGraphic(filePath))
+    {
+        sizeSlider->setMinimum(0);
+        sizeSlider->setMaximum((chart->getCountElemInDataTable() > MAX_LENGHT_CHART) ? MAX_LENGHT_CHART : chart->getCountElemInDataTable());
         updateUI();
+    }
     else
     {
         QMessageBox messageBox;
@@ -88,6 +102,8 @@ void ThemeWidget::connectSignals()
             this, &ThemeWidget::updateUI);
     connect(notColoredCheckBox, &QCheckBox::toggled, this, &ThemeWidget::updateUI);
     connect(printButton, SIGNAL(clicked()), this, SLOT(openFileDialogWindow()));
+
+    connect(sizeSlider, &QSlider::valueChanged, this, &ThemeWidget::updateUI);
 }
 
 void ThemeWidget::openFileDialogWindow()
@@ -136,11 +152,15 @@ QComboBox *ThemeWidget::createTypeBox() const
 
 void ThemeWidget::updateUI()
 {
+    QString val;
+    val.setNum(sizeSlider->value());
+    labelValueSlider->setText(val);
+
     TypeChart typeChart = static_cast<TypeChart>(
                 typeComboBox->itemData(typeComboBox->currentIndex()).toInt());
 
     addPrinterInContainer(typeChart);
-    chart->updateWidget(notColoredCheckBox->isChecked());
+    chart->updateWidget(notColoredCheckBox->isChecked(), sizeSlider->value());
 }
 
 void ThemeWidget::addPrinterInContainer(TypeChart type)

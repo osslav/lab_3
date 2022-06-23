@@ -1,6 +1,6 @@
 #include "printchart.h"
 
-void PrinterChartBar::createChart(QChartView &chartView, const DataTable& dataTable, bool notColored)
+void PrinterChartBar::createChart(QChartView &chartView, const DataTable& dataTable, bool notColored, int length)
 {
     if (!dataTable.isEmpty())
     {
@@ -10,7 +10,10 @@ void PrinterChartBar::createChart(QChartView &chartView, const DataTable& dataTa
         QBarSeries *series = new QBarSeries(chart);
         const DataList &data = dataTable.first();
 
-        for (int i(0); i < data.count(); i++)
+        if (data.count() < length)
+            length = data.count();
+
+        for (int i(0); i < length; i++)
         {
             QBarSet *set = new QBarSet(data[i].second);
             *set << data[i].first.y();
@@ -33,7 +36,7 @@ void PrinterChartBar::createChart(QChartView &chartView, const DataTable& dataTa
     }
 }
 
-void PrinterChartPie::createChart(QChartView &chartView, const DataTable& dataTable, bool notColored)
+void PrinterChartPie::createChart(QChartView &chartView, const DataTable& dataTable, bool notColored, int length)
 {
     QChart *chart = new QChart();
     chart->setTitle("Pie chart");
@@ -41,18 +44,25 @@ void PrinterChartPie::createChart(QChartView &chartView, const DataTable& dataTa
     qreal pieSize = 1.0 / dataTable.count();
     for (int i = 0; i < dataTable.count(); i++) {
         QPieSeries *series = new QPieSeries(chart);
+        int j = 0;
         int lightness = 0;
-        for (const Data &data : dataTable[i]) {
+        if (dataTable[i].count() < length)
+            length = dataTable[i].count();
+        for (const Data &data : dataTable[i])
+        {
+            if (j >= length)
+                break;
+
             QPieSlice *slice = series->append(data.second, data.first.y());
 
             if (notColored)
             {
+                lightness += 255 / length;
                 QColor color(0,0,0,lightness);
                 QBrush brush(color);
                 slice->setBrush(brush);
-
-                lightness += 255 / dataTable[i].count();
             }
+            j++;
         }
         qreal hPos = (pieSize / 2) + (i / (qreal) dataTable.count());
         series->setPieSize(pieSize);

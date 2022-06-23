@@ -32,10 +32,11 @@ WidgetChart::WidgetChart(QWidget* parent)
 }
 
 
-void WidgetChart::updateWidget(bool notColoredChart)
+void WidgetChart::updateWidget(bool notColoredChart, int length)
 {
     printer = IOCContainer::instance().GetttObject<IPrinterChart>();
     notColored = notColoredChart;
+    currentLenght = length;
 
     updateGraphic();
 }
@@ -47,7 +48,7 @@ bool WidgetChart::updateDataGraphic(const QString& filePath)
 
 void WidgetChart::updateGraphic()
 {
-    printer->createChart(chartView, m_dataTable, notColored);
+    printer->createChart(chartView, m_dataTable, notColored, currentLenght);
 }
 
 

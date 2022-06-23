@@ -29,9 +29,6 @@ bool ReadDataSqlite::readData(DataTable& dataTable, const QString& filePath)
             dataList << Data(value, tempDate);
 
             index++;
-
-            if (index > 10)
-                break;
         }
         dataTable << dataList;
 
@@ -78,9 +75,6 @@ bool ReadDataJson::readData(DataTable& dataTable, const QString& filePath)
 
             index++;
         }
-
-        if (index > 10)
-            break;
     }
 
     dataTable << dataList;
