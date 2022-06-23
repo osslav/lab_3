@@ -19,10 +19,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         mainwindow.cpp \
+        mychart.cpp \
         printchart.cpp \
         readdata.cpp \
         themewidget.cpp \
-        widgetchart.cpp \
         main.cpp
 
 # Default rules for deployment.
@@ -33,7 +33,7 @@ SOURCES += \
 HEADERS += \
     ioccontainer.h \
     mainwindow.h \
+    mychart.h \
     printchart.h \
     readdata.h \
-    themewidget.h \
-    widgetchart.h
+    themewidget.h

@@ -15,16 +15,14 @@
 
 QT_CHARTS_USE_NAMESPACE
 
-class WidgetChart : public QWidget
+class MyChart
 {
-    Q_OBJECT
 public:
-    WidgetChart(QWidget* parent = nullptr);
-    virtual ~WidgetChart() {}//{ if (chartView) delete chartView; }
+    MyChart();
 
-    void updateWidget(bool notColoredChart, int length);
+    void updateGraphic(bool notColoredChart, int length);
 
-    bool updateDataGraphic(const QString& filePath);
+    bool updateData(const QString& filePath);
 
     QChartView* getChartView() { return &chartView; };
 
@@ -37,7 +35,7 @@ private:
     std::shared_ptr<IPrinterChart> printer;
     int currentLenght;
 
-    void updateGraphic();
+    void update();
 };
 
 #endif /* WIDGETCHART_H */

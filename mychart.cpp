@@ -25,28 +25,27 @@
 #include "widgetchart.h"
 #include "ioccontainer.h"
 
-WidgetChart::WidgetChart(QWidget* parent)
- : QWidget(parent)
+MyChart::MyChart()
 {
     printer = IOCContainer::instance().GetttObject<IPrinterChart>();
 }
 
 
-void WidgetChart::updateWidget(bool notColoredChart, int length)
+void MyChart::updateGraphic(bool notColoredChart, int length)
 {
     printer = IOCContainer::instance().GetttObject<IPrinterChart>();
     notColored = notColoredChart;
     currentLenght = length;
 
-    updateGraphic();
+    update();
 }
 
-bool WidgetChart::updateDataGraphic(const QString& filePath)
+bool MyChart::updateData(const QString& filePath)
 {
     return IOCContainer::instance().GetttObject<IReadData>()->readData(m_dataTable, filePath);
 }
 
-void WidgetChart::updateGraphic()
+void MyChart::update()
 {
     printer->createChart(chartView, m_dataTable, notColored, currentLenght);
 }

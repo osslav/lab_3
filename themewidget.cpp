@@ -50,7 +50,7 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
 
     //create chart
     addPrinterInContainer(TypeChart::bar);
-    chart = new WidgetChart(this);
+    chart = new MyChart();
 
     baseLayout->addWidget(chart->getChartView());
 
@@ -81,7 +81,7 @@ ThemeWidget::~ThemeWidget()
 
 void ThemeWidget::updateDataGraphic(const QString& filePath)
 {
-    if (chart->updateDataGraphic(filePath))
+    if (chart->updateData(filePath))
     {
         sizeSlider->setMinimum(0);
         sizeSlider->setMaximum((chart->getCountElemInDataTable() > MAX_LENGHT_CHART) ? MAX_LENGHT_CHART : chart->getCountElemInDataTable());
@@ -160,7 +160,7 @@ void ThemeWidget::updateUI()
                 typeComboBox->itemData(typeComboBox->currentIndex()).toInt());
 
     addPrinterInContainer(typeChart);
-    chart->updateWidget(notColoredCheckBox->isChecked(), sizeSlider->value());
+    chart->updateGraphic(notColoredCheckBox->isChecked(), sizeSlider->value());
 }
 
 void ThemeWidget::addPrinterInContainer(TypeChart type)

@@ -47,7 +47,7 @@ private:
     QCheckBox *notColoredCheckBox;
     QPushButton *printButton;
 
-    WidgetChart *chart;
+    MyChart *chart;
 
     QHBoxLayout *sizeSliderLayout;
     QLabel *labelSizeSlider;
