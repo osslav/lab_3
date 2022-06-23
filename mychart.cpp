@@ -22,7 +22,7 @@
 #include <QtSql>
 #include <QSqlTableModel>
 
-#include "widgetchart.h"
+#include "mychart.h"
 #include "ioccontainer.h"
 
 MyChart::MyChart()
@@ -42,12 +42,12 @@ void MyChart::updateGraphic(bool notColoredChart, int length)
 
 bool MyChart::updateData(const QString& filePath)
 {
-    return IOCContainer::instance().GetttObject<IReadData>()->readData(m_dataTable, filePath);
+    return IOCContainer::instance().GetttObject<IReadData>()->readData(m_dataList, filePath);
 }
 
 void MyChart::update()
 {
-    printer->createChart(chartView, m_dataTable, notColored, currentLenght);
+    printer->createChart(chartView, m_dataList, notColored, currentLenght);
 }
 
 

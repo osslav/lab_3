@@ -1,22 +1,20 @@
 #include "printchart.h"
 
-void PrinterChartBar::createChart(QChartView &chartView, const DataTable& dataTable, bool notColored, int length)
+void PrinterChartBar::createChart(QChartView &chartView, const DataList& dataList, bool notColored, int length)
 {
-    if (!dataTable.isEmpty())
-    {
+
         QChart *chart = new QChart();
         chart->setTitle("Bar chart");
 
         QBarSeries *series = new QBarSeries(chart);
-        const DataList &data = dataTable.first();
 
-        if (data.count() < length)
-            length = data.count();
+        if (dataList.count() < length)
+            length = dataList.count();
 
         for (int i(0); i < length; i++)
         {
-            QBarSet *set = new QBarSet(data[i].second);
-            *set << data[i].first.y();
+            QBarSet *set = new QBarSet(dataList[i].second);
+            *set << dataList[i].first.y();
 
             if (notColored)
             {
@@ -33,22 +31,20 @@ void PrinterChartBar::createChart(QChartView &chartView, const DataTable& dataTa
         chart->createDefaultAxes();
 
         chartView.setChart(chart);
-    }
+
 }
 
-void PrinterChartPie::createChart(QChartView &chartView, const DataTable& dataTable, bool notColored, int length)
+void PrinterChartPie::createChart(QChartView &chartView, const DataList& dataList, bool notColored, int length)
 {
     QChart *chart = new QChart();
     chart->setTitle("Pie chart");
 
-    qreal pieSize = 1.0 / dataTable.count();
-    for (int i = 0; i < dataTable.count(); i++) {
         QPieSeries *series = new QPieSeries(chart);
         int j = 0;
         int lightness = 0;
-        if (dataTable[i].count() < length)
-            length = dataTable[i].count();
-        for (const Data &data : dataTable[i])
+        if (dataList.count() < length)
+            length = dataList.count();
+        for (const Data &data : dataList)
         {
             if (j >= length)
                 break;
@@ -64,12 +60,10 @@ void PrinterChartPie::createChart(QChartView &chartView, const DataTable& dataTa
             }
             j++;
         }
-        qreal hPos = (pieSize / 2) + (i / (qreal) dataTable.count());
-        series->setPieSize(pieSize);
-        series->setHorizontalPosition(hPos);
+
         series->setVerticalPosition(0.5);
         chart->addSeries(series);
-    }
+
 
     chartView.setChart(chart);
 }

@@ -1,5 +1,5 @@
-#ifndef WIDGETCHART_H
-#define WIDGETCHART_H
+#ifndef MYCHART_H
+#define MYCHART_H
 
 #include <QtWidgets/QWidget>
 #include <QtCharts/QChartGlobal>
@@ -26,11 +26,11 @@ public:
 
     QChartView* getChartView() { return &chartView; };
 
-    int getCountElemInDataTable() { return (m_dataTable.isEmpty() ? 0 : m_dataTable[0].size()); }
+    int getCountElemInDataTable() { return m_dataList.size(); }
 
 private:
     bool notColored = false;
-    DataTable m_dataTable;
+    DataList m_dataList;
     QChartView chartView;
     std::shared_ptr<IPrinterChart> printer;
     int currentLenght;
@@ -38,4 +38,4 @@ private:
     void update();
 };
 
-#endif /* WIDGETCHART_H */
+#endif /* MYCHART_H */

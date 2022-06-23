@@ -19,7 +19,7 @@ class IReadData
 public:
     IReadData() {};
 
-    virtual bool readData(DataTable& data, const QString& filePath) = 0;
+    virtual bool readData(DataList& dataList, const QString& filePath) = 0;
 };
 
 
@@ -28,7 +28,7 @@ class ReadDataSqlite : public IReadData
 public:
     ReadDataSqlite() {};
 
-    virtual bool readData(DataTable& dataTable, const QString& filePath);
+    virtual bool readData(DataList& dataList, const QString& filePath);
 };
 
 class ReadDataJson : public IReadData
@@ -36,7 +36,7 @@ class ReadDataJson : public IReadData
 public:
     ReadDataJson() {};
 
-    virtual bool readData(DataTable& dataTable, const QString& filePath);
+    virtual bool readData(DataList& dataList, const QString& filePath);
 };
 
 #endif // READDATA_H

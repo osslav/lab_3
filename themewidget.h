@@ -8,7 +8,7 @@
 #include <QtWidgets/QHBoxLayout>
 #include <QPushButton>
 
-#include "widgetchart.h"
+#include "mychart.h"
 
 
 QT_BEGIN_NAMESPACE

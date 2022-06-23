@@ -2,7 +2,7 @@
 
 #include "readdata.h"
 
-bool ReadDataSqlite::readData(DataTable& dataTable, const QString& filePath)
+bool ReadDataSqlite::readData(DataList& dataList, const QString& filePath)
 {
     QSqlDatabase sdb = QSqlDatabase::addDatabase("QSQLITE");
     sdb.setConnectOptions("QSQLITE_OPEN_READONLY=1");
@@ -13,10 +13,9 @@ bool ReadDataSqlite::readData(DataTable& dataTable, const QString& filePath)
         dbName.remove(0,dbName.lastIndexOf('/') + 1);
         dbName.remove(dbName.indexOf('.'), dbName.size() - dbName.indexOf('.'));
 
-        dataTable.clear();
+        dataList.clear();
         QSqlQuery query("SELECT VALUE, TIME FROM " + dbName, sdb);
         int index = 0;
-        DataList dataList;
         qDebug() << dbName;
 
 
@@ -30,7 +29,6 @@ bool ReadDataSqlite::readData(DataTable& dataTable, const QString& filePath)
 
             index++;
         }
-        dataTable << dataList;
 
         return true;
     }
@@ -41,7 +39,7 @@ bool ReadDataSqlite::readData(DataTable& dataTable, const QString& filePath)
 
 }
 
-bool ReadDataJson::readData(DataTable& dataTable, const QString& filePath)
+bool ReadDataJson::readData(DataList& dataList, const QString& filePath)
 {
     QString val;
     QFile file;
@@ -59,8 +57,7 @@ bool ReadDataJson::readData(DataTable& dataTable, const QString& filePath)
     }
     QJsonArray arr = doc.array();
 
-    dataTable.clear();
-    DataList dataList;
+    dataList.clear();
     int index = 0;
     foreach (const QJsonValue & value, arr)
     {
@@ -76,7 +73,5 @@ bool ReadDataJson::readData(DataTable& dataTable, const QString& filePath)
             index++;
         }
     }
-
-    dataTable << dataList;
 
 }
