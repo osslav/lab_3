@@ -31,11 +31,12 @@ MyChart::MyChart()
 }
 
 
-void MyChart::updateGraphic(bool notColoredChart, int length)
+void MyChart::updateGraphic(bool notColoredChart, int startPosition, int length)
 {
     printer = IOCContainer::instance().GetttObject<IPrinterChart>();
     notColored = notColoredChart;
     currentLenght = length;
+    currentStartPosition = startPosition;
 
     update();
 }
@@ -47,7 +48,7 @@ bool MyChart::updateData(const QString& filePath)
 
 void MyChart::update()
 {
-    printer->createChart(chartView, m_dataList, notColored, currentLenght);
+    printer->createChart(chartView, m_dataList, notColored, currentStartPosition, currentLenght);
 }
 
 

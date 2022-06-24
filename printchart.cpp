@@ -1,6 +1,6 @@
 #include "printchart.h"
 
-void PrinterChartBar::createChart(QChartView &chartView, const DataList& dataList, bool notColored, int length)
+void PrinterChartBar::createChart(QChartView &chartView, const DataList& dataList, bool notColored, int startPosition, int length)
 {
 
         QChart *chart = new QChart();
@@ -8,10 +8,11 @@ void PrinterChartBar::createChart(QChartView &chartView, const DataList& dataLis
 
         QBarSeries *series = new QBarSeries(chart);
 
-        if (dataList.count() < length)
-            length = dataList.count();
+        int endPosition = length + startPosition;
+        if (dataList.count() < endPosition)
+            endPosition = dataList.count();
 
-        for (int i(0); i < length; i++)
+        for (int i(startPosition); i < endPosition; i++)
         {
             QBarSet *set = new QBarSet(dataList[i].second);
             *set << dataList[i].first.y();
@@ -34,7 +35,7 @@ void PrinterChartBar::createChart(QChartView &chartView, const DataList& dataLis
 
 }
 
-void PrinterChartPie::createChart(QChartView &chartView, const DataList& dataList, bool notColored, int length)
+void PrinterChartPie::createChart(QChartView &chartView, const DataList& dataList, bool notColored, int startPosition, int length)
 {
     QChart *chart = new QChart();
     chart->setTitle("Pie chart");
@@ -42,21 +43,26 @@ void PrinterChartPie::createChart(QChartView &chartView, const DataList& dataLis
         QPieSeries *series = new QPieSeries(chart);
         int j = 0;
         int lightness = 0;
-        if (dataList.count() < length)
-            length = dataList.count();
+
+        int endPosition = length + startPosition;
+        if (dataList.count() < endPosition)
+            endPosition = dataList.count();
+
         for (const Data &data : dataList)
         {
-            if (j >= length)
+            if (j >= endPosition)
                 break;
-
-            QPieSlice *slice = series->append(data.second, data.first.y());
-
-            if (notColored)
+            if (j >= startPosition)
             {
-                lightness += 255 / length;
-                QColor color(0,0,0,lightness);
-                QBrush brush(color);
-                slice->setBrush(brush);
+                QPieSlice *slice = series->append(data.second, data.first.y());
+
+                if (notColored)
+                {
+                    lightness += 255 / length;
+                    QColor color(0,0,0,lightness);
+                    QBrush brush(color);
+                    slice->setBrush(brush);
+                }
             }
             j++;
         }

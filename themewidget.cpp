@@ -34,8 +34,12 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
     labelChooseTypeChart = new QLabel("Выберите тип диаграммы:");
 
     labelSizeSlider = new QLabel("Размер текущего фрагмента:");
-    labelValueSlider = new QLabel();
+    labelValueSizeSlider = new QLabel();
     sizeSlider = new QSlider(Qt::Horizontal);
+
+    labelPosSlider = new QLabel("Стартовая позиция текущего фрагмента:");
+    labelValuePosSlider = new QLabel();
+    posSlider = new QSlider(Qt::Horizontal);
 
     connectSignals();
     // create layout
@@ -57,8 +61,14 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
     sizeSliderLayout = new QHBoxLayout();
     sizeSliderLayout->addWidget(labelSizeSlider);
     sizeSliderLayout->addWidget(sizeSlider);
-    sizeSliderLayout->addWidget(labelValueSlider);
+    sizeSliderLayout->addWidget(labelValueSizeSlider);
     baseLayout->addLayout(sizeSliderLayout);
+
+    posSliderLayout = new QHBoxLayout();
+    posSliderLayout->addWidget(labelPosSlider);
+    posSliderLayout->addWidget(posSlider);
+    posSliderLayout->addWidget(labelValuePosSlider);
+    baseLayout->addLayout(posSliderLayout);
 
     setLayout(baseLayout);
 
@@ -104,6 +114,7 @@ void ThemeWidget::connectSignals()
     connect(printButton, SIGNAL(clicked()), this, SLOT(openFileDialogWindow()));
 
     connect(sizeSlider, &QSlider::valueChanged, this, &ThemeWidget::updateUI);
+    connect(posSlider, &QSlider::valueChanged, this, &ThemeWidget::updateUI);
 }
 
 void ThemeWidget::openFileDialogWindow()
@@ -152,15 +163,22 @@ QComboBox *ThemeWidget::createTypeBox() const
 
 void ThemeWidget::updateUI()
 {
-    QString val;
-    val.setNum(sizeSlider->value());
-    labelValueSlider->setText(val);
+    QString sizeFragment;
+    sizeFragment.setNum(sizeSlider->value());
+    labelValueSizeSlider->setText(sizeFragment);
+
+    posSlider->setMinimum(0);
+    posSlider->setMaximum((chart->getCountElemInDataTable() - sizeSlider->value()) < 0 ? 0 : (chart->getCountElemInDataTable() - sizeSlider->value()));
+
+    QString startPosFragment;
+    startPosFragment.setNum(posSlider->value());
+    labelValuePosSlider->setText(startPosFragment);
 
     TypeChart typeChart = static_cast<TypeChart>(
                 typeComboBox->itemData(typeComboBox->currentIndex()).toInt());
 
     addPrinterInContainer(typeChart);
-    chart->updateGraphic(notColoredCheckBox->isChecked(), sizeSlider->value());
+    chart->updateGraphic(notColoredCheckBox->isChecked(), posSlider->value(), sizeSlider->value());
 }
 
 void ThemeWidget::addPrinterInContainer(TypeChart type)

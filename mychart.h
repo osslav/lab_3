@@ -20,7 +20,7 @@ class MyChart
 public:
     MyChart();
 
-    void updateGraphic(bool notColoredChart, int length);
+    void updateGraphic(bool notColoredChart, int startPosition, int length);
 
     bool updateData(const QString& filePath);
 
@@ -34,6 +34,7 @@ private:
     QChartView chartView;
     std::shared_ptr<IPrinterChart> printer;
     int currentLenght;
+    int currentStartPosition;
 
     void update();
 };

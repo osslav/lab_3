@@ -19,7 +19,7 @@ class IPrinterChart
 public:
     IPrinterChart() {};
 
-    virtual void createChart(QChartView &chartView, const DataList& dataList, bool notColored = false, int length = 0) = 0;
+    virtual void createChart(QChartView &chartView, const DataList& dataList, bool notColored = false, int startPosition = 0, int length = 0) = 0;
 };
 
 
@@ -28,7 +28,7 @@ class PrinterChartBar : public IPrinterChart
 public:
     PrinterChartBar() {};
 
-    virtual void createChart(QChartView &chartView, const DataList& data, bool notColored = false, int length = 0);
+    virtual void createChart(QChartView &chartView, const DataList& data, bool notColored = false, int startPosition = 0, int length = 0);
 };
 
 class PrinterChartPie : public IPrinterChart
@@ -36,7 +36,7 @@ class PrinterChartPie : public IPrinterChart
 public:
     PrinterChartPie() {};
 
-     virtual void createChart(QChartView &chartView, const DataList& dataList, bool notColored = false, int length = 0);
+     virtual void createChart(QChartView &chartView, const DataList& dataList, bool notColored = false, int startPosition = 0, int length = 0);
 };
 
 

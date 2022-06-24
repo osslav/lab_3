@@ -52,7 +52,12 @@ private:
     QHBoxLayout *sizeSliderLayout;
     QLabel *labelSizeSlider;
     QSlider *sizeSlider;
-    QLabel *labelValueSlider;
+    QLabel *labelValueSizeSlider;
+
+    QHBoxLayout *posSliderLayout;
+    QLabel *labelPosSlider;
+    QSlider *posSlider;
+    QLabel *labelValuePosSlider;
 };
 
 #endif /* THEMEWIDGET_H */
