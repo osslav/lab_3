@@ -25,30 +25,33 @@
 #include "mychart.h"
 #include "ioccontainer.h"
 
+//конструктор
 MyChart::MyChart()
 {
-    printer = IOCContainer::instance().GetttObject<IPrinterChart>();
+    printer = IOCContainer::instance().GetttObject<IPrinterChart>();        //получаем принтер из контейнера
 }
 
-
+//функция обновления графика
 void MyChart::updateGraphic(bool notColoredChart, int startPosition, int length)
 {
-    printer = IOCContainer::instance().GetttObject<IPrinterChart>();
-    notColored = notColoredChart;
+    printer = IOCContainer::instance().GetttObject<IPrinterChart>();        //получаем из контейнера принтер
+    notColored = notColoredChart;                                           //обновляем поля класса, касающиеся свойств представления графика
     currentLenght = length;
     currentStartPosition = startPosition;
 
-    update();
+    update();                       //обновляем представление графика
 }
 
+//обновление данных графика
 bool MyChart::updateData(const QString& filePath)
 {
-    return IOCContainer::instance().GetttObject<IReadData>()->readData(m_dataList, filePath);
+    return IOCContainer::instance().GetttObject<IReadData>()->readData(m_dataList, filePath);   //получаем из контейнера ридер и сразу обновляем с его помощью данные
 }
 
+//функция обновления представления графика
 void MyChart::update()
 {
-    printer->createChart(chartView, m_dataList, notColored, currentStartPosition, currentLenght);
+    printer->createChart(chartView, m_dataList, notColored, currentStartPosition, currentLenght);   //с помощью текущего принтера обновляем представление графика
 }
 
 

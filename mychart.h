@@ -15,28 +15,29 @@
 
 QT_CHARTS_USE_NAMESPACE
 
+//класс графика(который не является виджетом, а хранит в себе данные и представление графика)
 class MyChart
 {
 public:
-    MyChart();
+    MyChart();      //конструктор
 
-    void updateGraphic(bool notColoredChart, int startPosition, int length);
+    void updateGraphic(bool notColoredChart, int startPosition, int length);        //функция обновления графика
 
-    bool updateData(const QString& filePath);
+    bool updateData(const QString& filePath);                                       //фукнция обновления данных графика
 
-    QChartView* getChartView() { return &chartView; };
+    QChartView* getChartView() { return &chartView; };                              //функция получения представления графика
 
-    int getCountElemInDataTable() { return m_dataList.size(); }
+    int getCountElemInDataTable() { return m_dataList.size(); }                     //функция получения количества данных, даступных для построения по ним графика
 
 private:
-    bool notColored = false;
-    DataList m_dataList;
-    QChartView chartView;
-    std::shared_ptr<IPrinterChart> printer;
-    int currentLenght;
-    int currentStartPosition;
+    bool notColored = false;                    //флаг - цветной ли график
+    DataList m_dataList;                        //таблица с данными
+    QChartView chartView;                       //представление графика
+    std::shared_ptr<IPrinterChart> printer;     //текущий принтер
+    int currentLenght;                          //текущее количество элементов на графике
+    int currentStartPosition;                   //текущая стартовая позция графика
 
-    void update();
+    void update();                              //функция обновления представления графика
 };
 
 #endif /* MYCHART_H */

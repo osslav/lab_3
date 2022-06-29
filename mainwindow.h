@@ -12,48 +12,47 @@
 
 class MyTable;
 
+//класс главного окна
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 
 private slots:
-    void selectInTableSlot();
+    void selectInTableSlot();               //слот обрабатывающий нажатие на элемент файловой таблицы
 
 public:
-	MainWindow(QWidget *parent = 0);
-	~MainWindow();
+    MainWindow(QWidget *parent = 0);        //конструктор
 private:
-    MyTable *tableWidget;
-    ThemeWidget *themeWidget;
+    MyTable *tableWidget;                   //содержит виджеты с файловой таблицей
+    ThemeWidget *themeWidget;               //и виджет с графиком
 };
 
+//класс виджет файловой таблицы с возможностью изменить текущую папку
 class MyTable : public QWidget
 {
     Q_OBJECT
 
 private slots:
-    void changeDirectory();
-    void selectInTableSlot(const QItemSelection &selected, const QItemSelection &deselected);
+    void changeDirectory();                 //слот изменения директории таблицы
+    void selectInTableSlot(const QItemSelection &selected, const QItemSelection &deselected);       //слот обрабатывающий нажатие на элемент файловой таблицы
 
 private:
-    QVBoxLayout *tableLayout;
-    QPushButton *changeDirectoryButton;
-    QFileSystemModel *fileModel;
-    QTableView *tableView;
+    QVBoxLayout *tableLayout;               //основной лэйаут
+    QPushButton *changeDirectoryButton;     //кнопка изменения директории таблицы
+    QFileSystemModel *fileModel;            //используемая файловая модель
+    QTableView *tableView;                  //файловая таблица
 
-    QString currentPath;
+    QString currentPath;                    //путь к выбранному в таблице файлу
 
-    bool addReaderInContainer(QString fileExtension);
+    bool addReaderInContainer(QString fileExtension);   //функция добавления ридера в ioc контейнер
 
 signals:
-    void directoryChanged();
+    void directoryChanged();                            //сигнал выбора нового файла
 
 public:
-    MyTable(QWidget *parent = 0);
+    MyTable(QWidget *parent = 0);                       //конструктор
 
-    QString getDirectory() { return currentPath; };
-
-    ~MyTable() {};
+    QString getDirectory() { return currentPath; };     //функция получения пути к выбранному файлу
 };
 
 #endif // MAINWINDOW_H
