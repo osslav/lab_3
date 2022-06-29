@@ -89,7 +89,7 @@ public:
 
     template<typename T>
 
-    std::shared_ptr<T> GetttObject()
+    std::shared_ptr<T> Get_Object()
     {
 
         auto typeId = GetTypeID<T>();
@@ -107,7 +107,7 @@ public:
     template<typename TInterface, typename ...TS>
     void RegisterFunctor(std::function<std::shared_ptr<TInterface>(std::shared_ptr<TS> ...ts)> functor)
     {
-        factories[GetTypeID<TInterface>()] = std::make_shared<CFactory<TInterface>>([=] {return functor(GetttObject<TS>()...); });
+        factories[GetTypeID<TInterface>()] = std::make_shared<CFactory<TInterface>>([=] {return functor(Get_Object<TS>()...); });
     }
 
     //Регистрация экземпляра объекта
@@ -143,7 +143,7 @@ public:
     template<typename TInterface, typename TConcrete, typename ...TArguments>
     void RegisterInstance()
     {
-        RegisterInstance<TInterface>(std::make_shared<TConcrete>(GetttObject<TArguments>()...));
+        RegisterInstance<TInterface>(std::make_shared<TConcrete>(Get_Object<TArguments>()...));
     }
 public:
     static IOCContainer& instance()
