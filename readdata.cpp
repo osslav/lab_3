@@ -75,8 +75,9 @@ QString ReadDataJson::readData(DataList& dataList, const QString& filePath)
     QJsonArray arr = doc.array();   //получаем json массив из документа
 
     int index = 0;              //индекс элементов массива
-    foreach (const QJsonValue & value, arr)     //ляю идет по элементам json массива
+    for (int i = 0; i < arr.size(); i++)     //цикл идет по элементам json массива
     {
+        QJsonValue value = arr[i];
         if (value.isObject())   //если элемент массива - объект, то
         {
             QJsonObject obj = value.toObject();     //формируем этот объект
