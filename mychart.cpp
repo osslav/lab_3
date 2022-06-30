@@ -43,7 +43,7 @@ void MyChart::updateGraphic(bool notColoredChart, int startPosition, int length)
 }
 
 //обновление данных графика
-bool MyChart::updateData(const QString& filePath)
+QString MyChart::updateData(const QString& filePath)
 {
     return IOCContainer::instance().Get_Object<IReadData>()->readData(m_dataList, filePath);   //получаем из контейнера ридер и сразу обновляем с его помощью данные
 }

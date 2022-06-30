@@ -3,9 +3,10 @@
 #include "readdata.h"
 
 //функция для чтения из файла sqlite по его пути в DataList - список данных
-bool ReadDataSqlite::readData(DataList& dataList, const QString& filePath)
+QString ReadDataSqlite::readData(DataList& dataList, const QString& filePath)
 {
     static QSqlDatabase sdb = QSqlDatabase::addDatabase("QSQLITE");     //создаем статическую переменную базы данных spllite
+    DataList newDataList;                                               //временное хранилище новых данных
     sdb.setConnectOptions("QSQLITE_OPEN_READONLY=1");                   //работаем с ней в режиме только чтение
     sdb.setDatabaseName(filePath);                                      //передаем путь к файлу объекту базы данных
     if (sdb.open())                                                     //открываем базу данных, если открытие успешно:
@@ -14,40 +15,53 @@ bool ReadDataSqlite::readData(DataList& dataList, const QString& filePath)
         dbName.remove(0,dbName.lastIndexOf('/') + 1);
         dbName.remove(dbName.indexOf('.'), dbName.size() - dbName.indexOf('.'));
 
-        dataList.clear();                                               //очищаем старые данные
         QSqlQuery query("SELECT VALUE, TIME FROM " + dbName, sdb);      //создаем запрос к базе данных
         int index = 0;                                                  //индекс текущего элемента в базе данных
 
-
         while (query.next())                                            //цикл идет по элементам базы данных
         {
+                                                                        //проверяем пригодность получаемых данных к использованию
+            if (query.value(0).userType() != QMetaType::Double || query.value(1).userType() != QMetaType::QString)
+            {
+                sdb.close();                                            //если полученные данные не Double или QString - закрываем бд и выходим из функции
+                return ("Данные не в нужном формате. Файл: " + filePath);
+            }
+
             double tempVal = query.value(0).toDouble();                 //считываем текущее значение и дату из элемента базы данных
             QString tempDate = query.value(1).toString();
             QPointF value(index, tempVal);
 
-            dataList << Data(value, tempDate);                          //записываем их в список данных
+            newDataList << Data(value, tempDate);                       //записываем их в список данных
 
             index++;
         }
 
         sdb.close();                                                    //закрываем базу данных
 
-        return true;                                                    //выходим из функции
+        if (index == 0)                                                 //отсутствие пригодных данных тоже считается нетипичной проблемой и требует сообщения пользователю
+        {
+            return ("Необходимые данные не найдены. Файл: " + filePath);
+         }
+
+
+        dataList = newDataList;                                         //записываем новые данные
+        return "";                                                    //выходим из функции(успешное выполнение)
     }
-    else                                                                //если открытие неуспешно, то возвращаем false
+    else                                                                //если открытие файла неуспешно, то возвращаем сообщение об ошибке
     {
-        return false;
+        return ("Ошибка открытия файла " + filePath);
     }
 }
 
 //функция для чтения из файла json по его пути в DataList - список данных
-bool ReadDataJson::readData(DataList& dataList, const QString& filePath)
+QString ReadDataJson::readData(DataList& dataList, const QString& filePath)
 {
+    DataList newDataList;       //временное хранилище считываемых данных
     QString val;                //строка - будет хранить содержимое файла json
     QFile file;                 //файл - будет содержать необходимый json файл
     file.setFileName(filePath); //устанавливаем для файла переданный в функцию путь
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))  //открываем файл
-        return false;               //если он не открылся - ошибка - завершаем фукнцию
+        return ("Ошибка открытия файла "  + filePath);               //если он не открылся - ошибка - завершаем фукнцию
 
     val = file.readAll();       //читаем содержимое файла в строку
     file.close();               //закрываем файл
@@ -56,26 +70,38 @@ bool ReadDataJson::readData(DataList& dataList, const QString& filePath)
 
     if (!doc.isArray())         //если json документ не содержит массив - выходим из функции, т к по нему не предусмотрен вариант построения графика
     {
-        return false;
+        return ("Данные не представлены в виде массива. Файл: " + filePath);
     }
     QJsonArray arr = doc.array();   //получаем json массив из документа
 
-    dataList.clear();           //очищаем старые данные из списка
     int index = 0;              //индекс элементов массива
-    foreach (const QJsonValue & value, arr)     //цикл идет по элементам json массива
+    for (int i = 0; i < arr.size(); i++)     //цикл идет по элементам json массива
     {
+        QJsonValue value = arr[i];
         if (value.isObject())   //если элемент массива - объект, то
         {
             QJsonObject obj = value.toObject();     //формируем этот объект
+
+            if (obj["Value"].isUndefined() || obj["Value"].isUndefined())       //проверяем существуют ли требуемые данные
+            {
+                return ("Необходимые данные не найдены. Файл: " + filePath);
+            }
+
+            if (!obj["Value"].isDouble() || !obj["Time"].isString())            //проверяем в каком формате представлены полученные данные
+            {
+                return ("Данные не в нужном формате. Файл: " + filePath);
+            }
+
             double val = obj["Value"].toDouble();   //считываем из него значение и дату в виде строки
             QString time = obj["Time"].toString();
 
             QPointF point(index, val);              //заносим эти данные в список
-            dataList << Data(point, time);
+            newDataList << Data(point, time);
 
             index++;                                //обновляем индекс текущего элемента
         }
     }
 
-    return true;
+    dataList = newDataList;             //записываем полученные данные
+    return "";                          //выходим из функции
 }
