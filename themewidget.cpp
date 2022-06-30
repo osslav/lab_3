@@ -81,7 +81,8 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
 //метод обновления данных на графике - принимает путь к файлу с данными в виде строки
 void ThemeWidget::updateDataGraphic(const QString& filePath)
 {
-    if (chart->updateData(filePath))     //обновляем данные в графике
+    QString exitMessage = chart->updateData(filePath);          //обновляем данные в графике и записываем сообшение о ходе выполнения функции
+    if (exitMessage == "")
     {
         sizeSlider->setMinimum(0);      //если успешно, то обновляем крайние позиции ползунка количества элементов графика
         sizeSlider->setMaximum((chart->getCountElemInDataTable() > MAX_LENGHT_CHART) ? MAX_LENGHT_CHART : chart->getCountElemInDataTable());
@@ -90,7 +91,7 @@ void ThemeWidget::updateDataGraphic(const QString& filePath)
     else
     {
         QMessageBox messageBox;         //иначе - выводим сообщение об ошибке
-        messageBox.critical(0,"Error","Unable to plot file: " + filePath);
+        messageBox.critical(0,"Error", exitMessage);
         messageBox.setFixedSize(500,200);
     }
 }

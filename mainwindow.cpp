@@ -139,7 +139,7 @@ void MyTable::selectInTableSlot(const QItemSelection &selected, const QItemSelec
         else
         {
             QMessageBox messageBox;                                         //если запись прошла неудачно выводим окно ошибки
-            messageBox.critical(0,"Error","This file not support");
+            messageBox.critical(0,"Error","Не поддерживается тип файла " + filePath);
             messageBox.setFixedSize(500,200);
         }
     }

@@ -23,7 +23,7 @@ public:
 
     void updateGraphic(bool notColoredChart, int startPosition, int length);        //функция обновления графика
 
-    bool updateData(const QString& filePath);                                       //фукнция обновления данных графика
+    QString updateData(const QString& filePath);                                       //фукнция обновления данных графика
 
     QChartView* getChartView() { return &chartView; };                              //функция получения представления графика
 
